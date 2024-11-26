@@ -1,29 +1,44 @@
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const connectDB = require('./utils/db'); // Assuming utils/db.js has MongoDB connection logic
+const authRoutes = require('./routes/authRoutes');
+const electionRoutes = require('./routes/electionRoutes');
+const voteRoutes = require('./routes/voteRoutes');
 
+// Initialize Express
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB
+connectDB()
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch((err) => {
+    console.error('MongoDB connection failed:', err);
+    process.exit(1); // Exit the process if MongoDB connection fails
+  });
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
-// MongoDB connection URI from environment variable
-const mongoURI = process.env.MONGODB_URI; 
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/elections', electionRoutes);
+app.use('/api/votes', voteRoutes);
 
-// Connect to MongoDB
-mongoose.connect(mongoURI)  // Removed useNewUrlParser
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('Could not connect to MongoDB:', error));
-
-// Sample route (you can replace this with actual routes later)
+// Test Endpoint (Optional)
 app.get('/', (req, res) => {
-  res.send('Hello from the backend!');
+  res.send('VoteSphere backend is running!');
 });
 
-// Start the server
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({ success: false, message: 'Internal Server Error' });
+});
+
+// Start the Server
 app.listen(PORT, () => {
-  console.log(`Backend server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

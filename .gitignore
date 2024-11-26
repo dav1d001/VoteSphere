@@ -2,3 +2,5 @@ node_modules/
 *.pyc
 .env
 frontend/build/
+# .gitignore
+.env
