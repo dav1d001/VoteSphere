@@ -1,5 +1,3 @@
-Here’s the updated `README.md` with the mention of blockchain features and implementation as "coming soon."
-
 ---
 
 # VoteSphere
